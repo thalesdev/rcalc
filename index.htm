@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
+    <link rel="stylesheet" href="app.css">
+    <title>&#530; Calc</title>
+</head>
+
+<body>
+    <div class="container" id="app">
+        <div class="row">
+            <div class="col-md-3 col-0"></div>
+            <div class="col-md-6 col-12">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-4"></div>
+                            <div class="col-md-4 text-center logo">&#530; CALC</div>
+                            <div class="col-md-4"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-12" id="options">
+                        <div class="row">
+                            <div v-for=" (item, index) in features" class="feature-setter col-6 col-sm"
+                                v-bind:class="[ activeFeature == index ? 'text-info' : '']"
+                                v-on:click="change_feature(index)">{{item.name}}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <!-- Features -->
+                        <!--- [VF & VP] -->
+                        <div class="col-md-12 feature" v-if="activeFeature == 0 || activeFeature == 1">
+                            <form>
+                                <div class="form-group">
+                                    <label for="n_mouths">Número de meses</label>
+                                    <input type="number" class="form-control" id="n_mouths"
+                                        placeholder="Digite o número de meses..." v-model="n">
+                                </div>
+                                <div class="form-group">
+                                    <label for="n_percents_per_mouth">Taxa de juros mensal</label>
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" id="n_percents_per_mouth"
+                                            placeholder="Digite uma taxa de juros..." v-model="j">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group" v-if="activeFeature == 1">
+                                    <label for="capital_a">Valor presente</label>
+                                    <input type="text" class="form-control" id="capital_a"
+                                        placeholder="Depósito realizado no início do mês..." v-model="pv">
+                                </div>
+                                <div class="form-group" v-if="activeFeature == 0">
+                                    <label for="vf">Valor futuro</label>
+                                    <input type="text" class="form-control" id="vf" placeholder="Valor futuro..."
+                                        v-model="fv">
+                                </div>
+                            </form>
+                            <div class="jumbotron"
+                                v-if="(validate_vp_f1() && activeFeature == 1) || (validate_vp_f0() && activeFeature == 0)"
+                                style="display:inline-block; width:100%;">
+                                <h5 style="text-transform: capitalize;">
+                                    {{activeFeature == 0 ? "Valor Presente" : "Capital Futuro"}}</h5>
+                                <hr class="my-4" style="margin-top:0.2rem !important;">
+                                <h5>{{ activeFeature == 0 ? calc_f0().toFixed(2) :  calc_f1().toFixed(2) }} R$</h5>
+                                <p class="lead">
+                                    <a class="btn btn-primary btn-lg" href="#" role="button"
+                                        v-on:click="clear($event)">Limpar</a>
+                                </p>
+
+                            </div>
+                        </div>
+                        <!--- //[VF & VP] -->
+                        <!--- [SPF] -->
+                        <div class="col-md-12 feature" v-if="activeFeature == 2">
+                            <form>
+                                <div class="form-group">
+                                    <label for="n_mouths">Número de meses</label>
+                                    <input type="number" class="form-control" id="n_mouths"
+                                        placeholder="Digite o número de meses..." v-model="n">
+                                </div>
+                                <div class="form-group">
+                                    <label for="n_percents_per_mouth">Taxa de juros mensal</label>
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" id="n_percents_per_mouth"
+                                            placeholder="Digite uma taxa de juros..." v-model="j">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="capital_a">Valor financiado</label>
+                                    <input type="text" class="form-control" id="capital_a"
+                                        placeholder="O valor financiado não inclui o valor da entrada" v-model="pv">
+                                </div>
+                            </form>
+                            <div class="jumbotron" v-if="validate_vp_f2()" style="display:inline-block; width:100%;">
+                                <h5 style="text-transform: capitalize;">Valor da parcela</h5>
+                                <hr class="my-4" style="margin-top:0.2rem !important;">
+                                <h5>{{calc_f2().toFixed(2) }} R$</h5>
+                                <p class="lead" style="margin-top:10px;">
+                                    <a class="btn btn-primary btn-lg" href="#" role="button"
+                                        v-on:click="clear($event)">Limpar</a>
+                                </p>
+                            </div>
+                        </div>
+                        <!--- //[SPF] -->
+                        <!--- [NP] -->
+                        <div class="col-md-12 feature" v-if="activeFeature == 3">
+                            <form>
+                                <div class="form-group">
+                                    <label for="n_percents_per_mouth">Taxa de juros mensal</label>
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" id="n_percents_per_mouth"
+                                            placeholder="Digite uma taxa de juros..." v-model="j">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="capital_a">Valor futuro</label>
+                                    <input type="text" class="form-control" id="capital_a"
+                                        placeholder="O valor financiado não inclui o valor da entrada" v-model="fv">
+                                </div>
+                                <div class="form-group">
+                                    <label for="capital_a">Valor presente</label>
+                                    <input type="text" class="form-control" id="capital_a"
+                                        placeholder="O valor que você possui agora" v-model="pv">
+                                </div>
+                            </form>
+                            <div class="jumbotron" v-if="validate_vp_f3() && calc_f3() >= 0" style="display:inline-block; width:100%;">
+                                <h5 style="text-transform: capitalize;">N° Periodos</h5>
+                                <hr class="my-4" style="margin-top:0.2rem !important;">
+                                <h5>{{calc_f3().toFixed(0) }} Meses</h5>
+                                <p class="lead" style="margin-top:10px;">
+                                    <a class="btn btn-primary btn-lg" href="#" role="button"
+                                        v-on:click="clear($event)">Limpar</a>
+                                </p>
+                            </div>
+                        </div>
+                        <!--- //[NP] -->
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-0"></div>
+        </div>
+
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <script src="https://npmcdn.com/vue/dist/vue.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,15 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+.feature-setter{
+    float:left;
+    padding:12px 10px;
+    cursor:pointer;
+}
+.logo{
+    padding:15px 2px;
+    font-size:22pt;
+    font-family: 'Open Sans', sans-serif;
+    color:#4caf50;
+}
+.feature{
+    margin:30px auto;
+}
