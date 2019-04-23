@@ -139,7 +139,7 @@
                             <div class="jumbotron" v-if="validate_vp_f3() && calc_f3() >= 0" style="display:inline-block; width:100%;">
                                 <h5 style="text-transform: capitalize;">N° Periodos</h5>
                                 <hr class="my-4" style="margin-top:0.2rem !important;">
-                                <h5>{{calc_f3().toFixed(0) }} Meses</h5>
+                                <h5>{{calc_f3().toFixed(2) }} Meses</h5>
                                 <p class="lead" style="margin-top:10px;">
                                     <a class="btn btn-primary btn-lg" href="#" role="button"
                                         v-on:click="clear($event)">Limpar</a>
